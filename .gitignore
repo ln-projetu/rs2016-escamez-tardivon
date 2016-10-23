@@ -4,6 +4,9 @@
 *.obj
 *.elf
 
+# Outputs folder
+./outputs
+
 # Precompiled Headers
 *.gch
 *.pch
