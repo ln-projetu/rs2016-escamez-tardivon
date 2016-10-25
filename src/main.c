@@ -16,6 +16,10 @@ int main(int argc, char *argv[]) {
 
   char *tab;                                       // rajout de l'exception si on oublie le fichier cible
   tab=argv[argc-1];
+  if(argc<2){
+    printf("No file target\n");
+    exit(EXIT_FAILURE);
+  }
   if (!(strncmp(&tab[0],"-",1))) {
     printf("No file target\n");
     exit(EXIT_FAILURE);
