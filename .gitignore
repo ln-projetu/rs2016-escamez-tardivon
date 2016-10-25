@@ -5,7 +5,8 @@
 *.elf
 
 # Outputs folder
-./outputs
+./outputs/
+./outputs/*
 
 # Precompiled Headers
 *.gch
