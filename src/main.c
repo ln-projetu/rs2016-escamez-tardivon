@@ -11,7 +11,7 @@
 //in this order :  ptar -x -c "test.txt"
 
 int main(int argc, char *argv[]) {
-          
+
   /*if (argc < 2) {                                       useless for now
     printf("Not enough arguments\n");
     printf("Usage: tarlist filename\n");
@@ -23,30 +23,34 @@ int xflag=0;
 int lflag=0;
 int pflag=0;
 int zflag=0;
+int nb_threads=0;
 
-while((opt = getopt(argc, argv, "xlpz")) != -1) {
+while((opt = getopt(argc, argv, "xlp:z")) != -1) {
   switch (opt) {
                case 'x':
                    xflag=1;
-                   printf("x\n");
                    break;
                case 'l':
                    lflag=1;
-                   printf("l\n");
                    break;
                case 'p':
                    pflag=1;
-                   printf("p\n");
+                   nb_threads=atoi(optarg);
                    break;
                case 'z':
                    zflag=1;
-                   printf("z\n");
                    break;
                case '?' :
-                   printf("invalid argument\n");
+                   if (optopt=='p'){
+                        printf ("Option -%c requires an argument.\n", optopt);
+                   }else{
+                     printf("invalid option\n");
+                  }
                    exit(EXIT_FAILURE);
                }
 }
+printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
+
 
   int fd;
   fd = open(argv[argc-1], O_RDONLY, 0);
