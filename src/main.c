@@ -8,9 +8,11 @@
 #include <getopt.h>
 #include "../headers/main.h"
 
+//in this order :  ptar -x -c "test.txt"
 
-/*int main(int argc, char *argv[]) {
-  if (argc < 2) {
+int main(int argc, char *argv[]) {
+          
+  /*if (argc < 2) {                                       useless for now
     printf("Not enough arguments\n");
     printf("Usage: tarlist filename\n");
     exit(1);
@@ -42,6 +44,7 @@ while((opt = getopt(argc, argv, "xlpz")) != -1) {
                    break;
                case '?' :
                    printf("invalid argument\n");
+                   exit(EXIT_FAILURE);
                }
 }
 
