@@ -10,18 +10,19 @@
 #include <string.h>
 #include "../headers/main.h"
 
-//in this order :  ptar -x -c "test.txt"
+//in this order :  ptar -x -c "target file"
 
 int main(int argc, char *argv[]) {
 
-  char *tab;                                       // rajout de l'exception si on oublie le fichier cible
-  tab=argv[argc-1];
+  int fd;
+  fd = open(argv[argc-1], O_RDONLY, 0);
+
   if(argc<2){
-    printf("No file target\n");
+    printf("No target file\n");
     exit(EXIT_FAILURE);
   }
-  if (!(strncmp(&tab[0],"-",1))) {
-    printf("No file target\n");
+  if (fd==-1) {
+    printf("No target file\n");
     exit(EXIT_FAILURE);
   }
 
@@ -32,6 +33,7 @@ int pflag=0;
 int zflag=0;
 int nb_threads=0;
 
+
 while((opt = getopt(argc, argv, "xlp:z")) != -1) {
   switch (opt) {
                case 'x':
@@ -41,11 +43,10 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
                    lflag=1;
                    break;
                case 'p':
-                   printf("optarg = '%s'\n",optarg); //if optarg n'est pas un int, ca dégage.
-                   if(isdigit((unsigned char) optarg)){
-                     pflag=1;
                      nb_threads=atoi(optarg);
-                   }else{
+                     if(nb_threads){
+                       pflag=1;
+                     }else{
                      printf("Option -p requires an argument of int\n");
                      exit(EXIT_FAILURE);
                    }
@@ -70,8 +71,7 @@ printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xf
 
 
 
-  int fd;
-  fd = open(argv[argc-1], O_RDONLY, 0);
+
   printf("The file descriptor is open: %d\n", fd);
   ustar buffer;
   read(fd, &buffer, 512);
@@ -84,6 +84,5 @@ printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xf
     //printf("%s\n",buffer.size);
     lseek(fd, 512, SEEK_CUR);
   }
-
   return 0;
 }
