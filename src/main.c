@@ -9,8 +9,7 @@
 
 int main(int argc, char const *argv[]) {
   if (argc < 2) {
-    printf("Not enough arguement\n");
-    printf("Usage: tarlist filename\n");
+    printf("usage: tarlist <filename>\n");
     exit(1);
   }
   int fd;
@@ -22,7 +21,7 @@ int main(int argc, char const *argv[]) {
   //printf("%s\n",buffer.size);
   lseek(fd, 512, SEEK_CUR);
   while (*buffer.size!=0) {
-    read(fd, &buffer, 512);
+    read(fd, &buffer, 512); //Note: pour visualiser les bytes %02X
     printf("%s\n",buffer.name);
     //printf("%s\n",buffer.size);
     lseek(fd, 512, SEEK_CUR);
