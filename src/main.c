@@ -5,7 +5,9 @@
 #include <string.h>
 #include <signal.h>
 #include <fcntl.h>
+#include <ctype.h>
 #include <getopt.h>
+#include <string.h>
 #include "../headers/main.h"
 #include <math.h>
 
@@ -25,10 +27,20 @@ long long convertOctalToDecimal(int octalNumber)
     return decimalNumber;
 }
 
+//in this order :  ptar -x -c "target file"
+
 int main(int argc, char *argv[]) {
-  if (argc < 2) {
-    printf("usage: tarlist <filename>\n");
-    exit(1);
+
+  int fd;
+  fd = open(argv[argc-1], O_RDONLY, 0);
+
+  if(argc<2){
+    printf("No target file\n");
+    exit(EXIT_FAILURE);
+  }
+  if (fd==-1) {
+    printf("No target file\n");
+    exit(EXIT_FAILURE);
   }
 
 int opt;
@@ -37,6 +49,7 @@ int lflag=0;
 int pflag=0;
 int zflag=0;
 int nb_threads=0;
+
 
 while((opt = getopt(argc, argv, "xlp:z")) != -1) {
   switch (opt) {
@@ -47,26 +60,35 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
                    lflag=1;
                    break;
                case 'p':
-                   pflag=1;
-                   nb_threads=atoi(optarg);
+                     nb_threads=atoi(optarg);
+                     if(nb_threads){
+                       pflag=1;
+                     }else{
+                     printf("Option -p requires an argument of int\n");
+                     exit(EXIT_FAILURE);
+                   }
                    break;
                case 'z':
                    zflag=1;
                    break;
                case '?' :
-                   if (optopt=='p'){
-                        printf ("Option -%c requires an argument.\n", optopt);
-                   }else{
-                     printf("invalid option\n");
-                  }
+                   //if (optopt=='p'){
+                  //      printf ("Option -%c requires an argument of int.\n", optopt);
+                   //}else {
+                     printf("must have -x -l -p or -z option\n");
+                  //}
                    exit(EXIT_FAILURE);
                }
 }
 printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
 
 
-  int fd;
-  fd = open(argv[argc-1], O_RDONLY, 0);
+
+
+
+
+
+
   printf("The file descriptor is open: %d\n", fd);
   ustar buffer;
   int init = 1;
@@ -95,6 +117,5 @@ printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xf
     //printf("Avancement de :%d\n",(int) (512* ceil((double)size/512.0))); //Problème avec les valeurs en octal
     lseek(fd,(int) (512* ceil((double)size/512.0)), SEEK_CUR);
   }
-
   return 0;
 }
