@@ -1,32 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <string.h>
-#include <signal.h>
-#include <fcntl.h>
-#include <ctype.h>
-#include <getopt.h>
-#include <string.h>
-#include <math.h>
 #include "../headers/main.h"
-
-
-long long convertOctalToDecimal(int octalNumber)
-{
-    int decimalNumber = 0, i = 0;
-
-    while(octalNumber != 0)
-    {
-        decimalNumber += (octalNumber%10) * pow(8,i);
-        ++i;
-        octalNumber/=10;
-    }
-
-    i = 1;
-
-    return decimalNumber;
-}
 
 //in this order :  ptar -x -c "target file"
 
@@ -85,11 +57,6 @@ printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xf
 
 
 
-
-
-
-
-
   printf("The file descriptor is open: %d\n", fd);
   ustar buffer;
   int init = 1;
@@ -106,16 +73,27 @@ printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xf
 
     if (size == 0) {
        if (atoi(buffer.typeflag) == 5) {
-         printf("%s\n",buffer.name);
+         char modeu = (buffer.mode[3]);
+         char modeg = (buffer.mode[4]);
+         char modeo = (buffer.mode[5]);
+         printf("%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
+         printf("%s ",buffer.name);
+         time_t rawtime = atoi(buffer.mtime);
+         printf("%s\n",ctime(&rawtime));
        }
        else {
          init = 0;
        }
     }
     else {
-      printf("%s\n",buffer.name);
+      char modeu = (buffer.mode[3]);
+      char modeg = (buffer.mode[4]);
+      char modeo = (buffer.mode[5]);
+      printf("%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
+      printf("%s ",buffer.name);
+      printf("%s\n",buffer.mtime);
     }
-    //printf("Avancement de :%d\n",(int) (512* ceil((double)size/512.0))); //Problème avec les valeurs en octal
+    //printf("Avancement de :%d\n",(int) (512* ceil((double)size/512.0)));
     lseek(fd,(int) (512* ceil((double)size/512.0)), SEEK_CUR);
   }
   return 0;
