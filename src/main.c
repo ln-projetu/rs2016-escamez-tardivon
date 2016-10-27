@@ -8,8 +8,9 @@
 #include <ctype.h>
 #include <getopt.h>
 #include <string.h>
-#include "../headers/main.h"
 #include <math.h>
+#include "../headers/main.h"
+
 
 long long convertOctalToDecimal(int octalNumber)
 {
