@@ -78,3 +78,17 @@ long long convertOctalToDecimal(int octalNumber)
 
     return decimalNumber;
 }
+
+int createFile(char* path, int xflag) {
+  if (xflag) {
+    strcat("./", path);
+    int buffer[0];
+    int size_buffer = 0;
+    int fd = open(path, O_RDWR, 0);
+    write(fd, buffer, size_buffer);
+    return 0;
+  }
+  else {
+    return 1;
+  }
+}
