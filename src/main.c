@@ -69,21 +69,8 @@ printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xf
     //printf("flag: %s\n",buffer.typeflag);
 
     if (lflag==1) { //Listing detaille : -l
-      if (size == 0) {
-         if (atoi(buffer.typeflag) == 5) {
-           char modeu = (buffer.mode[3]);
-           char modeg = (buffer.mode[4]);
-           char modeo = (buffer.mode[5]);
-           printf("%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
-
-             time_t rawtime = convertOctalToDecimal(atoi(buffer.mtime));
-           printf("%s", buffer.mtime);
-           printf("%s", ctime(&rawtime));
-           printf("%s",buffer.name);
-         }
-         else {
-           init = 0;
-         }
+      if (strcmp(buffer.magic, "ustar") != 0) {
+        init = 0;
       }
       else {
         char modeu = (buffer.mode[3]);
@@ -92,13 +79,9 @@ printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xf
         printf("%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
         timecrop=strdup(buffer.mtime);
         timecrop=strtok(timecrop," ");
-        printf("TEMPS CROP : %s\n", timecrop);
-        printf("ATOI TEMPS CROP : %ld \n", atol(timecrop));
         time_t rawtime = convertOctalToDecimal(atol(timecrop));
-        printf("TEMPS RAW : %s\n", buffer.mtime);
-        printf("TEMPS EN SEC : %lld\n", convertOctalToDecimal(atol(timecrop))); 
-        printf("DATE : %s\n", ctime(&rawtime));
-        printf("NOM : %s\n",buffer.name);
+        printf("%s ", ctime(&rawtime));
+        printf("%s\n",buffer.name);
       }
     }
 
@@ -114,8 +97,8 @@ printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xf
     lseek(fd,(int) (512* ceil((double)size/512.0)), SEEK_CUR);
   }
 
-  if (xflag == 1) {
+  /*if (xflag == 1) {
     fd = open(buffer.name, O_RDWR, 0);
-  }
+  }*/
   return 0;
 }

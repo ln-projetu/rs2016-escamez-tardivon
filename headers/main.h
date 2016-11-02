@@ -63,9 +63,9 @@ char* modeReading(char indice) {
 }
 
 
-long long convertOctalToDecimal(int octalNumber)
+long long convertOctalToDecimal(long octalNumber)
 {
-    int decimalNumber = 0, i = 0;
+    long decimalNumber = 0, i = 0;
 
     while(octalNumber != 0)
     {
