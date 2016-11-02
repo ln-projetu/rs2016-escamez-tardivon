@@ -11,6 +11,7 @@ int main(int argc, char *argv[]) {
     printf("No target file\n");
     exit(EXIT_FAILURE);
   }
+
   if (fd==-1) {
     printf("No target file\n");
     exit(EXIT_FAILURE);
@@ -45,12 +46,8 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
                    zflag=1;
                    break;
                case '?' :
-                   //if (optopt=='p'){
-                  //      printf ("Option -%c requires an argument of int.\n", optopt);
-                   //}else {
                      printf("must have -x -l -p or -z option\n");
-                  //}
-                   exit(EXIT_FAILURE);
+                     exit(EXIT_FAILURE);
                }
 }
 printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
@@ -61,6 +58,7 @@ printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xf
   int init = 1;
   char dest[11];
   int size = 0;
+  char * timecrop;
 
   while(init) {
 
@@ -70,15 +68,17 @@ printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xf
     //printf("size: %d\n",size);
     //printf("flag: %s\n",buffer.typeflag);
 
-    if (lflag==1) { //Listing complet
+    if (lflag==1) { //Listing detaille : -l
       if (size == 0) {
          if (atoi(buffer.typeflag) == 5) {
            char modeu = (buffer.mode[3]);
            char modeg = (buffer.mode[4]);
            char modeo = (buffer.mode[5]);
            printf("%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
-           time_t rawtime = atoi(buffer.mtime);
-           printf("%s ",ctime(&rawtime));
+
+             time_t rawtime = convertOctalToDecimal(atoi(buffer.mtime));
+           printf("%s", buffer.mtime);
+           printf("%s", ctime(&rawtime));
            printf("%s",buffer.name);
          }
          else {
@@ -90,9 +90,15 @@ printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xf
         char modeg = (buffer.mode[4]);
         char modeo = (buffer.mode[5]);
         printf("%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
-        time_t rawtime = atoi(buffer.mtime);
-        printf("%s ",ctime(&rawtime));
-        printf("%s ",buffer.name);
+        timecrop=strdup(buffer.mtime);
+        timecrop=strtok(timecrop," ");
+        printf("TEMPS CROP : %s\n", timecrop);
+        printf("ATOI TEMPS CROP : %ld \n", atol(timecrop));
+        time_t rawtime = convertOctalToDecimal(atol(timecrop));
+        printf("TEMPS RAW : %s\n", buffer.mtime);
+        printf("TEMPS EN SEC : %lld\n", convertOctalToDecimal(atol(timecrop))); 
+        printf("DATE : %s\n", ctime(&rawtime));
+        printf("NOM : %s\n",buffer.name);
       }
     }
 
