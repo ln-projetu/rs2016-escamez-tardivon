@@ -56,7 +56,6 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
 printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
 
 
-
   printf("The file descriptor is open: %d\n", fd);
   ustar buffer;
   int init = 1;
@@ -64,34 +63,46 @@ printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xf
   int size = 0;
 
   while(init) {
-    read(fd, &buffer, 512); //Note: pour visualiser les bytes %02X
 
+    read(fd, &buffer, 512); //Note: pour visualiser les bytes %02X
     strncpy(dest, buffer.size,11);
     size = convertOctalToDecimal(atoi(dest));
     //printf("size: %d\n",size);
     //printf("flag: %s\n",buffer.typeflag);
 
-    if (size == 0) {
-       if (atoi(buffer.typeflag) == 5) {
-         char modeu = (buffer.mode[3]);
-         char modeg = (buffer.mode[4]);
-         char modeo = (buffer.mode[5]);
-         printf("%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
-         printf("%s ",buffer.name);
-         time_t rawtime = atoi(buffer.mtime);
-         printf("%s\n",ctime(&rawtime));
-       }
-       else {
-         init = 0;
-       }
+    if (lflag==1) { //Listing complet
+      if (size == 0) {
+         if (atoi(buffer.typeflag) == 5) {
+           char modeu = (buffer.mode[3]);
+           char modeg = (buffer.mode[4]);
+           char modeo = (buffer.mode[5]);
+           printf("%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
+           time_t rawtime = atoi(buffer.mtime);
+           printf("%s ",ctime(&rawtime));
+           printf("%s",buffer.name);
+         }
+         else {
+           init = 0;
+         }
+      }
+      else {
+        char modeu = (buffer.mode[3]);
+        char modeg = (buffer.mode[4]);
+        char modeo = (buffer.mode[5]);
+        printf("%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
+        time_t rawtime = atoi(buffer.mtime);
+        printf("%s ",ctime(&rawtime));
+        printf("%s ",buffer.name);
+      }
     }
-    else {
-      char modeu = (buffer.mode[3]);
-      char modeg = (buffer.mode[4]);
-      char modeo = (buffer.mode[5]);
-      printf("%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
-      printf("%s ",buffer.name);
-      printf("%s\n",buffer.mtime);
+
+    else { //Listing simple
+      if (strcmp(buffer.magic, "ustar") != 0) {
+        init = 0;
+      }
+      else {
+        printf("%s\n",buffer.name);
+      }
     }
     //printf("Avancement de :%d\n",(int) (512* ceil((double)size/512.0)));
     lseek(fd,(int) (512* ceil((double)size/512.0)), SEEK_CUR);
