@@ -93,6 +93,10 @@ printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xf
         printf("%s\n",buffer.name);
       }
     }
+
+    if (xflag == 1) {
+      createFile(buffer.name);
+    }
     //printf("Avancement de :%d\n",(int) (512* ceil((double)size/512.0)));
     lseek(fd,(int) (512* ceil((double)size/512.0)), SEEK_CUR);
   }
