@@ -66,11 +66,12 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
     read(fd, &buffer, 512); //Note: pour visualiser les bytes %02X
     strncpy(dest, buffer.size,11);
     size = convertOctalToDecimal(atoi(dest));
+    //printf("%s\n",buffer.magic);
     //printf("size: %d\n",size);
     //printf("flag: %s\n",buffer.typeflag);
 
     if (lflag==1) { //Listing detaille : -l
-      if (strcmp(buffer.magic, "ustar") != 0) {
+      if (strncmp(buffer.magic, "ustar",5) != 0) {
         init = 0;
       }
       else {
@@ -117,12 +118,13 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
     }
 
     else { //Listing simple
-      if (strcmp(buffer.magic, "ustar") != 0) {
+      if (strncmp(buffer.magic, "ustar",5) != 0) {
         init = 0;
       }
       else {
         printf("%s\n",buffer.name);
       }
+
     }
 
     if (xflag == 1) {
