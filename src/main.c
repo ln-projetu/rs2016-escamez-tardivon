@@ -50,15 +50,16 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
                      exit(EXIT_FAILURE);
                }
 }
-printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
+  //printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
+  //printf("The file descriptor is open: %d\n", fd);
 
-
-  printf("The file descriptor is open: %d\n", fd);
   ustar buffer;
   int init = 1;
   char dest[11];
   int size = 0;
   char * timecrop;
+  char timebuff[20];
+  struct tm * timeinfo;
 
   while(init) {
 
@@ -77,11 +78,19 @@ printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xf
         char modeg = (buffer.mode[4]);
         char modeo = (buffer.mode[5]);
         printf("%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
+        //printf uid/gid
+        printf("%s/%s ",buffer.uid,buffer.gid);
+        printf("%lld ",convertOctalToDecimal(atol(buffer.size)));
+
         timecrop=strdup(buffer.mtime);
         timecrop=strtok(timecrop," ");
         time_t rawtime = convertOctalToDecimal(atol(timecrop));
-        printf("%s ", ctime(&rawtime));
+        timeinfo = localtime(&rawtime);
+        strftime(timebuff,20,"%F %X ",timeinfo);
+        printf("%s ",timebuff);
+        
         printf("%s\n",buffer.name);
+        //si simlink : printf ('-> destination')
       }
     }
 
