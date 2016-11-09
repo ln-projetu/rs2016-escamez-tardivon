@@ -79,12 +79,12 @@ long long convertOctalToDecimal(long octalNumber)
     return decimalNumber;
 }
 
-int createFile(char* path) {
+int createFile(char* path, int size, int fd) {
     //Create a file
-    strcat("./", path);
-    int buffer[0];
-    int size_buffer = 0;
-    int fd = open(path, O_CREAT, 0);
-    write(fd, buffer, size_buffer);
+    int fd2 = open(path, O_CREAT | O_WRONLY);
+    char buffer[size-1];
+    read(fd, &buffer, size);
+    write(fd2, &buffer, size);
+    close(fd2);
     return 0;
 }

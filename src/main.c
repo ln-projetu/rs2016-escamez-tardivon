@@ -95,14 +95,17 @@ printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xf
     }
 
     if (xflag == 1) {
-      createFile(buffer.name);
+      //printf("%d\n",size);
+      createFile(buffer.name, size, fd);
+      lseek(fd,(int) (512* ceil((double)size/512.0)) - size, SEEK_CUR);
+      //printf("Avancement de : %d\n", (int) (512* ceil((double)size/512.0)) - size);
     }
-    //printf("Avancement de :%d\n",(int) (512* ceil((double)size/512.0)));
-    lseek(fd,(int) (512* ceil((double)size/512.0)), SEEK_CUR);
-  }
+    else {
+      //printf("%d\n",size);
+      //printf("Avancement de :%d\n",(int) (512* ceil((double)size/512.0)));
+      lseek(fd,(int) (512* ceil((double)size/512.0)), SEEK_CUR);
+    }
 
-  /*if (xflag == 1) {
-    fd = open(buffer.name, O_RDWR, 0);
-  }*/
+  }
   return 0;
 }
