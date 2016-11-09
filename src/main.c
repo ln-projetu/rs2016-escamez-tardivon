@@ -74,23 +74,45 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
         init = 0;
       }
       else {
+        //print permissions
         char modeu = (buffer.mode[3]);
         char modeg = (buffer.mode[4]);
         char modeo = (buffer.mode[5]);
-        printf("%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
-        //printf uid/gid
-        printf("%s/%s ",buffer.uid,buffer.gid);
+
+        if(atoi(buffer.typeflag)==5){
+          printf("d%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
+        }else if(atoi(buffer.typeflag)==2){
+          printf("l%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
+        }else{
+          printf("-%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
+        }
+
+        //print uid/gid
+        long long lldUID=convertOctalToDecimal(atol(buffer.uid));
+        long long lldGID=convertOctalToDecimal(atol(buffer.gid));
+        printf("%lld/%lld ",lldUID,lldGID);
+
+        //print size
         printf("%lld ",convertOctalToDecimal(atol(buffer.size)));
 
+        //print modification date
         timecrop=strdup(buffer.mtime);
         timecrop=strtok(timecrop," ");
         time_t rawtime = convertOctalToDecimal(atol(timecrop));
         timeinfo = localtime(&rawtime);
         strftime(timebuff,20,"%F %X ",timeinfo);
         printf("%s ",timebuff);
-        
-        printf("%s\n",buffer.name);
-        //si simlink : printf ('-> destination')
+
+        //print name
+        printf("%s",buffer.name);
+
+        //if(simlink) print('-> destination')
+        if(atoi(buffer.typeflag)==2){
+          printf("->%s\n",buffer.name);
+        }else{
+          printf("\n");
+        }
+
       }
     }
 
