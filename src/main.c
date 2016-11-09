@@ -50,7 +50,7 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
                      exit(EXIT_FAILURE);
                }
 }
-  //printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
+  printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
   //printf("The file descriptor is open: %d\n", fd);
 
   ustar buffer;
@@ -98,7 +98,7 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
         //print modification date
         timecrop=strdup(buffer.mtime);
         timecrop=strtok(timecrop," ");
-        time_t rawtime = convertOctalToDecimal(atol(timecrop));
+        time_t rawtime = convertOctalToDecimal(atol(timecrop))+7200;
         timeinfo = localtime(&rawtime);
         strftime(timebuff,20,"%F %X ",timeinfo);
         printf("%s ",timebuff);
