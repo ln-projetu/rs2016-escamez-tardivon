@@ -50,7 +50,11 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
                      exit(EXIT_FAILURE);
                }
 }
-  printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
+  //printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
+
+if(pflag==0){}
+if(zflag==0){}
+if(nb_threads==0){}
 
 
   ustar buffer;
