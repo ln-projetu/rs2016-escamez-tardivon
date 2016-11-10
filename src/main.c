@@ -50,7 +50,7 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
                      exit(EXIT_FAILURE);
                }
 }
-  //printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
+  printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
   //printf("The file descriptor is open: %d\n", fd);
 
   ustar buffer;
@@ -108,7 +108,7 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
 
         //if(simlink) print('-> destination')
         if(atoi(buffer.typeflag)==2){
-          printf("->%s\n",buffer.name);
+          printf(" ->%s\n",buffer.name);
         }else{
           printf("\n");
         }
