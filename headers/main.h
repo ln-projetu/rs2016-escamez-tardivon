@@ -9,6 +9,9 @@
 #include <getopt.h>
 #include <string.h>
 #include <math.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 
 typedef struct header_posix_ustar ustar;
 struct header_posix_ustar {
@@ -79,9 +82,10 @@ long long convertOctalToDecimal(long octalNumber)
     return decimalNumber;
 }
 
-int createFile(char* path, int size, int fd) {
+int createFile(char* path, int size, int fd, int mode) {
     //Create a file
-    int fd2 = open(path, O_CREAT | O_WRONLY);
+    printf("%d\n",mode);
+    int fd2 = open(path, O_CREAT | O_WRONLY, mode);
     char buffer[size-1];
     read(fd, &buffer, size);
     write(fd2, &buffer, size);

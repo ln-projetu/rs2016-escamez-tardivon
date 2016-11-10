@@ -51,7 +51,7 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
                }
 }
   printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
-  //printf("The file descriptor is open: %d\n", fd);
+
 
   ustar buffer;
   int init = 1;
@@ -109,7 +109,7 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
 
         //if(simlink) print('-> destination')
         if(atoi(buffer.typeflag)==2){
-          printf(" ->%s\n",buffer.name);
+          printf(" -> %s\n",buffer.linkname);
         }else{
           printf("\n");
         }
@@ -128,8 +128,19 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
     }
 
     if (xflag == 1) {
-      //printf("%d\n",size);
-      createFile(buffer.name, size, fd);
+      char* perm1 = buffer.mode+3;
+      int perm = atoi(perm1);
+      printf("%d\n", perm);
+      perm = convertOctalToDecimal(perm);
+      if (atoi(buffer.typeflag) == 5) {
+        mkdir(buffer.name, perm);
+      }
+      else if (atoi(buffer.typeflag) == 2) {
+        symlink(buffer.linkname, buffer.name);
+      }
+      else {
+        createFile(buffer.name, size, fd, perm);
+      }
       lseek(fd,(int) (512* ceil((double)size/512.0)) - size, SEEK_CUR);
       //printf("Avancement de : %d\n", (int) (512* ceil((double)size/512.0)) - size);
     }
