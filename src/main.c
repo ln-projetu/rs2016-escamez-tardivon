@@ -134,22 +134,39 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
       perm = convertOctalToDecimal(perm);
       if (atoi(buffer.typeflag) == 5) {
         mkdir(buffer.name, perm);
+
+        struct utimbuf *new_times = malloc(sizeof(struct utimbuf));
+        timecrop=strdup(buffer.mtime);
+        timecrop=strtok(timecrop," ");
+        new_times->modtime = convertOctalToDecimal(atol(timecrop));
+        utime(buffer.name, new_times);
+        free(new_times);
+        chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
       }
       else if (atoi(buffer.typeflag) == 2) {
         symlink(buffer.linkname, buffer.name);
+
+        struct utimbuf *new_times = malloc(sizeof(struct utimbuf));
+        timecrop=strdup(buffer.mtime);
+        timecrop=strtok(timecrop," ");
+        new_times->modtime = convertOctalToDecimal(atol(timecrop));
+        utime(buffer.name, new_times);
+        free(new_times);
+        chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
       }
-      else {
+      else if (atoi(buffer.typeflag) == 1){
         createFile(buffer.name, size, fd, perm);
+
+        struct utimbuf *new_times = malloc(sizeof(struct utimbuf));
+        timecrop=strdup(buffer.mtime);
+        timecrop=strtok(timecrop," ");
+        new_times->modtime = convertOctalToDecimal(atol(timecrop));
+        utime(buffer.name, new_times);
+        free(new_times);
+        chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
       }
 
-      struct utimbuf *new_times = malloc(sizeof(struct utimbuf));
-      timecrop=strdup(buffer.mtime);
-      timecrop=strtok(timecrop," ");
-      new_times->modtime = convertOctalToDecimal(atol(timecrop));
-      utime(buffer.name, new_times);
 
-      free(new_times);
-      chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
 
       lseek(fd,(int) (512* ceil((double)size/512.0)) - size, SEEK_CUR);
 
