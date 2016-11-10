@@ -11,6 +11,7 @@
 #include <math.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <utime.h>
 
 
 typedef struct header_posix_ustar ustar;
@@ -84,7 +85,6 @@ long long convertOctalToDecimal(long octalNumber)
 
 int createFile(char* path, int size, int fd, int mode) {
     //Create a file
-    printf("%d\n",mode);
     int fd2 = open(path, O_CREAT | O_WRONLY, mode);
     char buffer[size-1];
     read(fd, &buffer, size);

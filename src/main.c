@@ -123,6 +123,7 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
       }
       else {
         printf("%s\n",buffer.name);
+
       }
 
     }
@@ -130,7 +131,6 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
     if (xflag == 1) {
       char* perm1 = buffer.mode+3;
       int perm = atoi(perm1);
-      printf("%d\n", perm);
       perm = convertOctalToDecimal(perm);
       if (atoi(buffer.typeflag) == 5) {
         mkdir(buffer.name, perm);
@@ -141,15 +141,29 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
       else {
         createFile(buffer.name, size, fd, perm);
       }
+
+      struct utimbuf *new_times = malloc(sizeof(struct utimbuf));
+      timecrop=strdup(buffer.mtime);
+      timecrop=strtok(timecrop," ");
+      new_times->modtime = convertOctalToDecimal(atol(timecrop));
+      utime(buffer.name, new_times);
+
+      free(new_times);
+      chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
+
       lseek(fd,(int) (512* ceil((double)size/512.0)) - size, SEEK_CUR);
+
       //printf("Avancement de : %d\n", (int) (512* ceil((double)size/512.0)) - size);
     }
     else {
       //printf("%d\n",size);
       //printf("Avancement de :%d\n",(int) (512* ceil((double)size/512.0)));
+
       lseek(fd,(int) (512* ceil((double)size/512.0)), SEEK_CUR);
+
     }
 
   }
+
   return 0;
 }
