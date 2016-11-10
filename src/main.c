@@ -158,15 +158,15 @@ if(nb_threads==0){}
         free(new_times);
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
       }
-      else if (atoi(buffer.typeflag) == 1){
+      else {
         createFile(buffer.name, size, fd, perm);
 
-        struct utimbuf *new_times = malloc(sizeof(struct utimbuf));
+        /*struct utimbuf *new_times = malloc(sizeof(struct utimbuf));
         timecrop=strdup(buffer.mtime);
         timecrop=strtok(timecrop," ");
         new_times->modtime = convertOctalToDecimal(atol(timecrop));
         utime(buffer.name, new_times);
-        free(new_times);
+        free(new_times);*/
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
       }
 
