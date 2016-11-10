@@ -50,7 +50,11 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
                      exit(EXIT_FAILURE);
                }
 }
-  printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
+  //printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
+
+if(pflag==0){}
+if(zflag==0){}
+if(nb_threads==0){}
 
 
   ustar buffer;
@@ -142,13 +146,14 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
         createFile(buffer.name, size, fd, perm);
       }
 
-      struct utimbuf *new_times = malloc(sizeof(struct utimbuf));
-      timecrop=strdup(buffer.mtime);
+      /*struct utimbuf *new_times = malloc(sizeof(struct utimbuf));
+      timecrop=strdup(strbuffer.mtime);
       timecrop=strtok(timecrop," ");
       new_times->modtime = convertOctalToDecimal(atol(timecrop));
       utime(buffer.name, new_times);
 
-      free(new_times);
+      free(new_times);*/
+
       chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
 
       lseek(fd,(int) (512* ceil((double)size/512.0)) - size, SEEK_CUR);
