@@ -99,7 +99,7 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
         //print modification date
         timecrop=strdup(buffer.mtime);
         timecrop=strtok(timecrop," ");
-        time_t rawtime = convertOctalToDecimal(atol(timecrop))+7200;
+        time_t rawtime = convertOctalToDecimal(atol(timecrop));
         timeinfo = localtime(&rawtime);
         strftime(timebuff,20,"%F %X ",timeinfo);
         printf("%s ",timebuff);
