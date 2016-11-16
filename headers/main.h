@@ -35,34 +35,43 @@ struct header_posix_ustar {
         char pad[12];
 };
 
-char* modeReading(char indice) {
-  char* result;
-  switch (indice) {
-    case '0':
-      result = "---";
-      break;
-    case '1':
-      result = "--x";
-      break;
-    case '2':
-      result = "-w-";
-      break;
-    case '3':
-      result = "-wx";
-      break;
-    case '4':
-      result = "r--";
-      break;
-    case '5':
-      result = "r-x";
-      break;
-    case '6':
-      result = "rw-";
-      break;
-    case '7':
-      result = "rwx";
-      break;
+char* modeReading(char* perm) {
+  char* result = malloc(sizeof(char) * 12);
+
+  for (int i = 0; i<3; i++) {
+    char indice = perm[i];
+
+    char* temp;
+    switch (indice) {
+      case '0':
+        temp = "---";
+        break;
+      case '1':
+        temp = "--x";
+        break;
+      case '2':
+        temp = "-w-";
+        break;
+      case '3':
+        temp = "-wx";
+        break;
+      case '4':
+        temp = "r--";
+        break;
+      case '5':
+        temp = "r-x";
+        break;
+      case '6':
+        temp = "rw-";
+        break;
+      case '7':
+        temp = "rwx";
+        break;
+    }
+
+    strcat(result, temp);
   }
+
   return result;
 }
 

@@ -79,17 +79,13 @@ if(nb_threads==0){}
         init = 0;
       }
       else {
-        //print permissions
-        char modeu = (buffer.mode[4]); //3 Pour mac, à tester pour linux
-        char modeg = (buffer.mode[5]); //4
-        char modeo = (buffer.mode[6]); //5
         //printf("%c\n", buffer.mode[3]);
         if(atoi(buffer.typeflag)==5){
-          printf("d%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
+          printf("d%s ",modeReading(buffer.mode+4));
         }else if(atoi(buffer.typeflag)==2){
-          printf("l%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
+          printf("l%s ",modeReading(buffer.mode+4));
         }else{
-          printf("-%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
+          printf("-%s ",modeReading(buffer.mode+4));
         }
 
         //print uid/gid
