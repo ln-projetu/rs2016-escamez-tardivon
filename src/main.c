@@ -80,10 +80,10 @@ if(nb_threads==0){}
       }
       else {
         //print permissions
-        char modeu = (buffer.mode[3]);
-        char modeg = (buffer.mode[4]);
-        char modeo = (buffer.mode[5]);
-
+        char modeu = (buffer.mode[4]); //3 Pour mac, à tester pour linux
+        char modeg = (buffer.mode[5]); //4
+        char modeo = (buffer.mode[6]); //5
+        //printf("%c\n", buffer.mode[3]);
         if(atoi(buffer.typeflag)==5){
           printf("d%s%s%s ",modeReading(modeu),modeReading(modeg),modeReading(modeo));
         }else if(atoi(buffer.typeflag)==2){
