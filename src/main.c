@@ -81,11 +81,11 @@ if(nb_threads==0){}
       else {
         //printf("%c\n", buffer.mode[3]);
         if(atoi(buffer.typeflag)==5){
-          printf("d%s ",modeReading(buffer.mode+4));
+          printf("d%s%s%s ",modeReading(buffer.mode+4),modeReading(buffer.mode+5), modeReading(buffer.mode+6));
         }else if(atoi(buffer.typeflag)==2){
-          printf("l%s ",modeReading(buffer.mode+4));
+          printf("l%s%s%s ",modeReading(buffer.mode+4),modeReading(buffer.mode+5), modeReading(buffer.mode+6));
         }else{
-          printf("-%s ",modeReading(buffer.mode+4));
+          printf("-%s%s%s ",modeReading(buffer.mode+4),modeReading(buffer.mode+5), modeReading(buffer.mode+6));
         }
 
         //print uid/gid

@@ -36,12 +36,9 @@ struct header_posix_ustar {
 };
 
 char* modeReading(char* perm) {
-  char* result = malloc(sizeof(char) * 12);
 
-  for (int i = 0; i<3; i++) {
-    char indice = perm[i];
-
-    char* temp;
+  char indice = perm[0];
+static  char* temp;
     switch (indice) {
       case '0':
         temp = "---";
@@ -69,10 +66,8 @@ char* modeReading(char* perm) {
         break;
     }
 
-    strcat(result, temp);
-  }
 
-  return result;
+  return temp;
 }
 
 
