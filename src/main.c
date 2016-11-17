@@ -128,56 +128,34 @@ if(nb_threads==0){}
 
     }
 
+
     if (xflag == 1) {
       char* perm1 = buffer.mode+3;
       int perm = atoi(perm1);
       perm = convertOctalToDecimal(perm);
+
+
       if (atoi(buffer.typeflag) == 5) {
         mkdir(buffer.name, perm);
-
-        timecrop=strdup(buffer.mtime);
-        timecrop=strtok(timecrop," ");
-
-
-        struct stat foo;
-        struct timespec new_times[2];
-
-        if (stat(buffer.name, &foo) < 0) {
-            perror(buffer.name);
-          return 1;
-        }
-
-
-        /* set mtime to current time */
-        clock_gettime(convertOctalToDecimal(atol(timecrop)), &new_times[1]);
-
-        utimensat(AT_FDCWD, buffer.name, new_times, 0);
 
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
       }
       else if (atoi(buffer.typeflag) == 2) {
         symlink(buffer.linkname, buffer.name);
 
-        struct utimbuf *new_times = malloc(sizeof(struct utimbuf));
-        timecrop=strdup(buffer.mtime);
-        timecrop=strtok(timecrop," ");
-        new_times->modtime = convertOctalToDecimal(atol(timecrop));
-        utime(buffer.name, new_times);
-        free(new_times);
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
       }
       else {
         createFile(buffer.name, size, fd, perm);
 
-        /*struct utimbuf *new_times = malloc(sizeof(struct utimbuf));
-        timecrop=strdup(buffer.mtime);
-        timecrop=strtok(timecrop," ");
-        new_times->modtime = convertOctalToDecimal(atol(timecrop));
-        utime(buffer.name, new_times);
-        free(new_times);*/
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
       }
 
+
+      struct utimbuf new_times;
+      timecrop=strdup(buffer.mtime);
+      new_times.modtime = convertOctalToDecimal(atol(timecrop));;
+      utime(buffer.name, &new_times);
 
 
 
