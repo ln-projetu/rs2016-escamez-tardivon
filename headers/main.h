@@ -14,6 +14,7 @@
 #include <sys/time.h>
 #include <utime.h>
 #include <time.h>
+#include <stddef.h>
 
 typedef struct header_posix_ustar ustar;
 struct header_posix_ustar {
@@ -36,64 +37,8 @@ struct header_posix_ustar {
         char pad[12];
 };
 
-char* modeReading(char* perm) {
+char* modeReading(char* perm);
 
-  char indice = perm[0];
-static  char* temp;
-    switch (indice) {
-      case '0':
-        temp = "---";
-        break;
-      case '1':
-        temp = "--x";
-        break;
-      case '2':
-        temp = "-w-";
-        break;
-      case '3':
-        temp = "-wx";
-        break;
-      case '4':
-        temp = "r--";
-        break;
-      case '5':
-        temp = "r-x";
-        break;
-      case '6':
-        temp = "rw-";
-        break;
-      case '7':
-        temp = "rwx";
-        break;
-    }
+long long convertOctalToDecimal(long octalNumber);
 
-
-  return temp;
-}
-
-
-long long convertOctalToDecimal(long octalNumber)
-{
-    long decimalNumber = 0, i = 0;
-
-    while(octalNumber != 0)
-    {
-        decimalNumber += (octalNumber%10) * pow(8,i);
-        ++i;
-        octalNumber/=10;
-    }
-
-    i = 1;
-
-    return decimalNumber;
-}
-
-int createFile(char* path, int size, int fd, int mode) {
-    //Create a file
-    int fd2 = open(path, O_CREAT | O_WRONLY, mode);
-    char buffer[size-1];
-    read(fd, &buffer, size);
-    write(fd2, &buffer, size);
-    close(fd2);
-    return 0;
-}
+int createFile(char* path, int size, int fd, int mode);

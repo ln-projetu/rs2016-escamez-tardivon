@@ -1,6 +1,63 @@
 #include "../headers/main.h"
 
-//in this order :  ptar -x -c "target file"
+char* modeReading(char* perm) {
+
+char indice = perm[0];
+static  char* temp;
+    switch (indice) {
+      case '0':
+        temp = "---";
+        break;
+      case '1':
+        temp = "--x";
+        break;
+      case '2':
+        temp = "-w-";
+        break;
+      case '3':
+        temp = "-wx";
+        break;
+      case '4':
+        temp = "r--";
+        break;
+      case '5':
+        temp = "r-x";
+        break;
+      case '6':
+        temp = "rw-";
+        break;
+      case '7':
+        temp = "rwx";
+        break;
+    }
+  return temp;
+}
+
+long long convertOctalToDecimal(long octalNumber)
+{
+    long decimalNumber = 0, i = 0;
+
+    while(octalNumber != 0)
+    {
+        decimalNumber += (octalNumber%10) * pow(8,i);
+        ++i;
+        octalNumber/=10;
+    }
+
+    i = 1;
+
+    return decimalNumber;
+}
+
+int createFile(char* path, int size, int fd, int mode) {
+    //Create a file
+    int fd2 = open(path, O_CREAT | O_WRONLY, mode);
+    char buffer[size-1];
+    read(fd, &buffer, size);
+    write(fd2, &buffer, size);
+    close(fd2);
+    return 0;
+}
 
 int main(int argc, char *argv[]) {
 
@@ -172,6 +229,58 @@ if(nb_threads==0){}
 
     }
 
+  }
+
+  init = 1;
+  fd = open(argv[argc-1], O_RDONLY, 0);
+  while (init) {
+    read(fd, &buffer, 512); //Note: pour visualiser les bytes %02X
+    strncpy(dest, buffer.size,11);
+    size = convertOctalToDecimal(atoi(dest));
+  
+    if (strncmp(buffer.magic, "ustar",5) != 0) {
+      init = 0;
+    }
+    if (xflag == 1) {
+      char* perm1 = buffer.mode+3;
+      int perm = atoi(perm1);
+      perm = convertOctalToDecimal(perm);
+
+
+      if (atoi(buffer.typeflag) == 5) {
+        struct utimbuf new_times;
+        timecrop=strdup(buffer.mtime);
+        new_times.modtime = convertOctalToDecimal(atol(timecrop));
+        utime(buffer.name, &new_times);
+
+
+      }
+      else if (atoi(buffer.typeflag) == 2) {
+
+        struct timeval timeval[2];
+        struct timeval const *t;
+        timecrop=strdup(buffer.mtime);
+        timeval[0].tv_sec = 0;
+        timeval[0].tv_usec = 0;
+        timeval[1].tv_sec = convertOctalToDecimal(atol(timecrop));
+        timeval[1].tv_usec = 0;
+        t = timeval;
+        lutimes (buffer.name, t);
+
+      }
+      else {
+        struct utimbuf new_times;
+        timecrop=strdup(buffer.mtime);
+        new_times.modtime = convertOctalToDecimal(atol(timecrop));
+        utime(buffer.name, &new_times);
+
+        chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
+      }
+
+      lseek(fd,(int) (512* ceil((double)size/512.0)) - size, SEEK_CUR);
+
+      //printf("Avancement de : %d\n", (int) (512* ceil((double)size/512.0)) - size);
+    }
   }
 
   return 0;
