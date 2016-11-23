@@ -37,8 +37,19 @@ struct header_posix_ustar {
         char pad[12];
 };
 
+typedef struct
+{
+   char* path;
+   int size;
+   int fd;
+   int mode;
+}
+argument;
+
 char* modeReading(char* perm);
 
 long long convertOctalToDecimal(long octalNumber);
 
 int createFile(char* path, int size, int fd, int mode);
+
+void *createFileP(void* arg);

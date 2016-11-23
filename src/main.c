@@ -53,10 +53,19 @@ int createFile(char* path, int size, int fd, int mode) {
     //Create a file
     int fd2 = open(path, O_CREAT | O_WRONLY, mode);
     char buffer[size-1];
+    //Prendre un mutex là
     read(fd, &buffer, size);
+    //Relacher un mutex ici
     write(fd2, &buffer, size);
     close(fd2);
     return 0;
+}
+
+void *createFileP(void* arg) {
+  argument *newarg = (argument*) arg;
+  printf("Thread num: %p\n",(void *) pthread_self());
+  printf("Path: %s, Size: %d, fd: %d, mode: %d\n",newarg->path, newarg->size, newarg->fd, newarg->mode);
+  pthread_exit(NULL);
 }
 
 int main(int argc, char *argv[]) {
@@ -121,6 +130,8 @@ if(nb_threads==0){}
   char * timecrop;
   char timebuff[20];
   struct tm * timeinfo;
+  pthread_t thread[nb_threads];
+
 
   while(init) {
 
@@ -203,7 +214,23 @@ if(nb_threads==0){}
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
       }
       else {
-        createFile(buffer.name, size, fd, perm);
+        //En tête du fichier
+        if (pflag) {
+          argument* arg;
+          arg = malloc(nb_threads * sizeof(argument));
+          int i;
+          for (i = 0; i < nb_threads; i++) {
+            arg[i].fd = fd;
+            arg[i].mode = perm;
+            arg[i].path = "a";
+            arg[i].size = size;
+            pthread_create(&thread[i], NULL, createFileP,(void *) &arg[i]);
+          }
+        }
+        else {
+          createFile(buffer.name, size, fd, perm);
+        }
+
 
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
       }
