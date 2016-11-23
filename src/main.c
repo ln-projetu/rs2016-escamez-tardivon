@@ -237,7 +237,7 @@ if(nb_threads==0){}
     read(fd, &buffer, 512); //Note: pour visualiser les bytes %02X
     strncpy(dest, buffer.size,11);
     size = convertOctalToDecimal(atoi(dest));
-  
+
     if (strncmp(buffer.magic, "ustar",5) != 0) {
       init = 0;
     }
