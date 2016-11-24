@@ -63,8 +63,24 @@ int createFile(char* path, int size, int fd, int mode) {
 
 void *createFileP(void* arg) {
   argument *newarg = (argument*) arg;
-  printf("Thread num: %p\n",(void *) pthread_self());
-  printf("Path: %s, Size: %d, fd: %d, mode: %d\n",newarg->path, newarg->size, newarg->fd, newarg->mode);
+  //printf("Thread num: %p\n",(void *) pthread_self());
+  //printf("Path: %s, Size: %d, fd: %d, mode: %d\n",newarg->path, newarg->size, newarg->fd, newarg->mode);
+
+  //Create a file
+  //int fd2 = open(newarg->path, O_CREAT | O_WRONLY, newarg->mode); TODO
+  char buffer[(newarg->size)-1];
+
+  pthread_mutex_lock(&newarg->mutex);
+  read(newarg->fd, &buffer, newarg->size);
+  pthread_mutex_unlock(&newarg->mutex);
+
+  printf("Ecriture Thread: %s\n", newarg->path);
+  printf("thread: %p\n",(void *) pthread_self());
+
+  //write(fd2, &buffer, newarg->size); TODO
+  //fsync(fd2); TODO
+  //close(fd2); TODO
+  sem_post(newarg->sema);
   pthread_exit(NULL);
 }
 
@@ -72,6 +88,10 @@ int main(int argc, char *argv[]) {
 
   int fd;
   fd = open(argv[argc-1], O_RDONLY, 0);
+
+
+
+
 
   if(argc<2){
     printf("No target file\n");
@@ -118,9 +138,10 @@ while((opt = getopt(argc, argv, "xlp:z")) != -1) {
 }
   //printf ("xflag = %d, lflag = %d, pflag = %d, nb_threads = %d, zflag = %d \n", xflag, lflag, pflag, nb_threads, zflag);
 
-if(pflag==0){}
-if(zflag==0){}
-if(nb_threads==0){}
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
+if(zflag){}
+//if(nb_threads==0){}
 
 
   ustar buffer;
@@ -131,7 +152,8 @@ if(nb_threads==0){}
   char timebuff[20];
   struct tm * timeinfo;
   pthread_t thread[nb_threads];
-
+  sem_t * sema;
+  sema = sem_open("mysema",O_CREAT, S_IRUSR | S_IWUSR, nb_threads);
 
   while(init) {
 
@@ -204,12 +226,14 @@ if(nb_threads==0){}
 
 
       if (atoi(buffer.typeflag) == 5) {
-        mkdir(buffer.name, perm);
+        //mkdir(buffer.name, perm); TODO
+        printf("Ecriture PP: %s\n",buffer.name);
 
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
       }
       else if (atoi(buffer.typeflag) == 2) {
-        symlink(buffer.linkname, buffer.name);
+        //symlink(buffer.linkname, buffer.name); TODO
+        printf("Ecriture PP: %s\n",buffer.name);
 
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
       }
@@ -218,14 +242,17 @@ if(nb_threads==0){}
         if (pflag) {
           argument* arg;
           arg = malloc(nb_threads * sizeof(argument));
-          int i;
-          for (i = 0; i < nb_threads; i++) {
-            arg[i].fd = fd;
-            arg[i].mode = perm;
-            arg[i].path = "a";
-            arg[i].size = size;
-            pthread_create(&thread[i], NULL, createFileP,(void *) &arg[i]);
-          }
+          int i= 0;
+          printf("%p\n",sema); //Il s'arrête donc là
+          sem_wait(sema);
+          arg[i].fd = fd;
+          arg[i].mode = perm;
+          arg[i].path = buffer.name;
+          arg[i].size = size;
+          arg[i].mutex = mutex;
+          arg[i].sema = sema;
+          pthread_create(&thread[i], NULL, createFileP,(void *) &arg[i]);
+
         }
         else {
           createFile(buffer.name, size, fd, perm);
@@ -257,9 +284,10 @@ if(nb_threads==0){}
     }
 
   }
-
+  //Le programme doit attendre la fin de tous les threads
   init = 1;
   fd = open(argv[argc-1], O_RDONLY, 0);
+  sem_close(sema);
   while (init) {
     read(fd, &buffer, 512); //Note: pour visualiser les bytes %02X
     strncpy(dest, buffer.size,11);

@@ -15,6 +15,7 @@
 #include <utime.h>
 #include <time.h>
 #include <stddef.h>
+#include <semaphore.h>
 
 typedef struct header_posix_ustar ustar;
 struct header_posix_ustar {
@@ -39,6 +40,8 @@ struct header_posix_ustar {
 
 typedef struct
 {
+   sem_t* sema;
+   pthread_mutex_t mutex;
    char* path;
    int size;
    int fd;
