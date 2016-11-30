@@ -125,7 +125,6 @@ if(nb_threads==0){}
 
 
   while(init) {
-    printf("Passage de boucle 1\n");
     read(fd, &buffer, 512); //Note: pour visualiser les bytes %02X
     strncpy(dest, buffer.size,11);
     size = convertOctalToDecimal(atoi(dest));
@@ -199,7 +198,7 @@ if(nb_threads==0){}
 
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
       }
-      else if (atoi(buffer.typeflag) == 2) {
+      else if (atoi(buffer.typeflag) == 2 || atoi(buffer.typeflag) == 1) {
         symlink(buffer.linkname, buffer.name);
 
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
@@ -246,14 +245,13 @@ if(nb_threads==0){}
     init = 1;
     int fd3 = open(argv[argc-1], O_RDONLY, 0);
     while (init) {
-      printf("Passage de boucle 2\n");
+
       read(fd3, &buffer, 512); //Note: pour visualiser les bytes %02X
       strncpy(dest, buffer.size,11);
       size = convertOctalToDecimal(atoi(dest));
 
       if (strncmp(buffer.magic, "ustar",5) != 0) {
         init = 0;
-        printf("init a 0\n");
       }
       if (xflag == 1) {
         char* perm1 = buffer.mode+3;
@@ -265,16 +263,9 @@ if(nb_threads==0){}
           struct utimbuf new_times;
           timecrop=strdup(buffer.mtime);
           new_times.modtime = convertOctalToDecimal(atol(timecrop));
-          int err = utime(buffer.name, &new_times);
-          printf("%d\n", err);
+          utime(buffer.name, &new_times);
 
 
-        }
-        else if (atoi(buffer.typeflag) == 2) {
-
-
-        }
-        else {
 
         }
 
