@@ -1,112 +1,135 @@
-\documentclass[a4paper]{report}
 
-%====================== PACKAGES ======================
-
+\documentclass{scrreprt}
+\usepackage{listings}
+\usepackage{underscore}
+\usepackage[bookmarks=true]{hyperref}
+\usepackage[utf8]{inputenc}
 \usepackage[french]{babel}
-\usepackage[utf8x]{inputenc}
-%pour gérer les positionnement d'images
-\usepackage{float}
-\usepackage{amsmath}
-\usepackage{graphicx}
-\usepackage[colorinlistoftodos]{todonotes}
-\usepackage{url}
-%pour les informations sur un document compilé en PDF et les liens externes / internes
-\usepackage{hyperref}
-%pour la mise en page des tableaux
+\usepackage[top=2cm, bottom=3.5cm, left=3cm, right=3cm]{geometry}
+\usepackage{fontawesome}
+\usepackage[utf8]{inputenc}
 \usepackage{array}
-\usepackage{tabularx}
-%pour utiliser \floatbarrier
-%\usepackage{placeins}
-%\usepackage{floatrow}
-%espacement entre les lignes
-\usepackage{setspace}
-%modifier la mise en page de l'abstract
-\usepackage{abstract}
-%police et mise en page (marges) du document
-\usepackage[T1]{fontenc}
-\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}
-%Pour les galerie d'images
-\usepackage{subfig}
+%\usepackage[latin1]{inputenc}
+%\usepackage[francais]{babel}
+\usepackage{graphicx}
+\usepackage{titlesec}
 
-%====================== INFORMATION ET REGLES ======================
-
-%rajouter les numérotation pour les \paragraphe et \subparagraphe
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{4}
 
-\hypersetup{                            % Information sur le document
-pdfauthor = {Premier Auteur,
-            Deuxième Auteur,
-            Troisième Auteur,
-            Quatrième Auteur},          % Auteurs
-pdftitle = {Nom du Projet -
-            Sujet du Projet},           % Titre du document
-pdfsubject = {Mémoire de Projet},       % Sujet
-pdfkeywords = {Tag1, Tag2, Tag3, ...},  % Mots-clefs
-pdfstartview={FitH}}                    % ajuste la page à la largueur de l'écran
-%pdfcreator = {MikTeX},% Logiciel qui a crée le document
-%pdfproducer = {}} % Société avec produit le logiciel
+\hypersetup{
+    bookmarks=false,    % show bookmarks bar?
+    pdftitle={Rapport},    % title
+    pdfauthor={ESCAMEZ/TARDIVON},   % author
+    pdfsubject={TeX and LaTeX},                        % subject of the document
+    pdfkeywords={TeX, LaTeX, graphics, images}, % list of keywords
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=black,       % color of internal links
+    citecolor=black,       % color of links to bibliography
+    filecolor=black,        % color of file links
+    urlcolor=blue,        % color of external links
+    linktoc=section            % only page is linked
+}%
+\def\myversion{1.0 }
+\date{}
+%\title{%
 
-%======================== DEBUT DU DOCUMENT ========================
+%}
 
+\usepackage{hyperref}
+%\usepackage[T1]{fontenc}
 \begin{document}
-
-%régler l'espacement entre les lignes
-\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
-
-%page de garde
-\input{./title.tex}
-
-%page blanche
-\newpage
-~
-%ne pas numéroter cette page
+%   TEST POUR AFFICHER L'IMAGE TELECOM NANCY
+%\includegraphics[height=50px, width=100px]{Telecomnancy.png}
+%
 \thispagestyle{empty}
-\newpage
+\begin{flushright}
+    \rule{15cm}{3pt}\vskip1,5cm
+    \begin{bfseries}
+        \Huge{RAPPORT \\ RS SYSTEME}\\
+        \vspace{2cm}
+        \\
+        \vspace{2cm}
+        \Huge{Extracteur d'archive tar durable et parallèle}\\
 
-\input{./abstract.tex}
+        \vspace{0.5cm}
+        \LARGE{Version \myversion}\\
+        \begin{flushleft}
+            \vspace{8cm}
+            Github repository : \href{https://github.com/ln-projetu/rs2016-escamez-tardivon}{\faGithub}~\\
+            \vspace{0.5cm}
+
+            Maxime ESCAMEZ\\
+            Quentin TARDIVON\\
+        \end{flushleft}
+    \end{bfseries}
+\end{flushright}
 
 \tableofcontents
-\thispagestyle{empty}
+
 \setcounter{page}{0}
-%ne pas numéroter le sommaire
 
-\newpage
+\chapter{- Introduction}
 
-%espacement entre les lignes d'un tableau
-\renewcommand{\arraystretch}{1.5}
+{\let\clearpage\relax \chapter{- Choix de conception et difficultés rencontrées}}
 
-%====================== INCLUSION DES PARTIES ======================
+\section{Listeur simple}
+\section{Traitements des options de liste de commande}
+\section{Extracteur}
+\section{Listeur et extracteur détaillé}
+\section{Ajout de la durabilité et parallélisation}
 
-~
-\thispagestyle{empty}
-%recommencer la numérotation des pages à "1"
-\setcounter{page}{0}
-\newpage
+{\let\clearpage\relax \chapter{Temps de travail}}
 
-\input{./presentation.tex}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
 
-\input{./existant.tex}
+\begin{center}
+    \textbf{Maxime ESCAMEZ}
+    \begin{tabular}{|P{1.5cm}|P{2.5cm}|P{1.5cm}|P{1.2cm}|P{4.3cm}|}
+        \hline
+	    \bf Etape &\bf Conception &\bf Codage &\bf Tests &\bf Rédaction du rapport \bf\\
+        \hline
+        \textbf{1} & 1h & 1h & 1h & 1h\\
+        \hline
+        \textbf{2} & 1h & 1h & 1h & 1h\\
+        \hline
+        \textbf{3} & 1h & 1h & 1h & 1h\\
+        \hline
+        \textbf{4} & 1h & 1h & 1h & 1h\\
+        \hline
+        \textbf{5} & 1h & 1h & 1h & 1h\\
+        \hline
+    \end{tabular}
+\end{center}
 
-\input{./besoins.tex}
+\begin{center}
+    \textbf{Quentin TARDIVON}
 
-\input{./autre_partie.tex}
+    \begin{tabular}{|P{1.5cm}|P{2.5cm}|P{1.5cm}|P{1.2cm}|P{4.3cm}|}
+        \hline
+	    \bf Etape &\bf Conception &\bf Codage &\bf Tests &\bf Rédaction du rapport \bf\\
+        \hline
+        \textbf{1} & 1h & 1h & 1h & 1h\\
+        \hline
+        \textbf{2} & 1h & 1h & 1h & 1h\\
+        \hline
+        \textbf{3} & 1h & 1h & 1h & 1h\\
+        \hline
+        \textbf{4} & 1h & 1h & 1h & 1h\\
+        \hline
+        \textbf{5} & 1h & 1h & 1h & 1h\\
+        \hline
+    \end{tabular}
+\end{center}
 
-\input{./resultats.tex}
 
-\input{./bilan.tex}
 
-\input{./annexes.tex}
+{\let\clearpage\relax \chapter{- Conclusion}}
 
-\newpage
 
-%récupérer les citation avec "/footnotemark"
-\nocite{*}
 
-%choix du style de la biblio
-\bibliographystyle{plain}
-%inclusion de la biblio
-\bibliography{bibliographie.bib}
-%voir wiki pour plus d'information sur la syntaxe des entrées d'une bibliographie
+{\let\clearpage\relax \chapter{- Remerciements}}
+
+
 
 \end{document}
