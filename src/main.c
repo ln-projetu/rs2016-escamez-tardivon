@@ -122,8 +122,10 @@ if(nb_threads==0){}
   char timebuff[20];
   struct tm * timeinfo;
 
-  while(init) {
 
+
+  while(init) {
+    printf("Passage de boucle 1\n");
     read(fd, &buffer, 512); //Note: pour visualiser les bytes %02X
     strncpy(dest, buffer.size,11);
     size = convertOctalToDecimal(atoi(dest));
@@ -201,18 +203,27 @@ if(nb_threads==0){}
         symlink(buffer.linkname, buffer.name);
 
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
+
+        struct timeval timeval[2];
+        struct timeval const *t;
+        timecrop=strdup(buffer.mtime);
+        timeval[0].tv_sec = 0;
+        timeval[0].tv_usec = 0;
+        timeval[1].tv_sec = convertOctalToDecimal(atol(timecrop));
+        timeval[1].tv_usec = 0;
+        t = timeval;
+        lutimes (buffer.name, t);
       }
       else {
         createFile(buffer.name, size, fd, perm);
 
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
+
+        struct utimbuf new_times;
+        timecrop=strdup(buffer.mtime);
+        new_times.modtime = convertOctalToDecimal(atol(timecrop));
+        utime(buffer.name, &new_times);
       }
-
-
-      struct utimbuf new_times;
-      timecrop=strdup(buffer.mtime);
-      new_times.modtime = convertOctalToDecimal(atol(timecrop));;
-      utime(buffer.name, &new_times);
 
 
 
@@ -230,58 +241,49 @@ if(nb_threads==0){}
     }
 
   }
+  close(fd);
+  if (xflag == 1) {
+    init = 1;
+    int fd3 = open(argv[argc-1], O_RDONLY, 0);
+    while (init) {
+      printf("Passage de boucle 2\n");
+      read(fd3, &buffer, 512); //Note: pour visualiser les bytes %02X
+      strncpy(dest, buffer.size,11);
+      size = convertOctalToDecimal(atoi(dest));
 
-  init = 1;
-  fd = open(argv[argc-1], O_RDONLY, 0);
-  while (init) {
-    read(fd, &buffer, 512); //Note: pour visualiser les bytes %02X
-    strncpy(dest, buffer.size,11);
-    size = convertOctalToDecimal(atoi(dest));
-  
-    if (strncmp(buffer.magic, "ustar",5) != 0) {
-      init = 0;
+      if (strncmp(buffer.magic, "ustar",5) != 0) {
+        init = 0;
+        printf("init a 0\n");
+      }
+      if (xflag == 1) {
+        char* perm1 = buffer.mode+3;
+        int perm = atoi(perm1);
+        perm = convertOctalToDecimal(perm);
+
+
+        if (atoi(buffer.typeflag) == 5) {
+          struct utimbuf new_times;
+          timecrop=strdup(buffer.mtime);
+          new_times.modtime = convertOctalToDecimal(atol(timecrop));
+          int err = utime(buffer.name, &new_times);
+          printf("%d\n", err);
+
+
+        }
+        else if (atoi(buffer.typeflag) == 2) {
+
+
+        }
+        else {
+
+        }
+
+        lseek(fd,(int) (512* ceil((double)size/512.0)), SEEK_CUR);
+
+        //printf("Avancement de : %d\n", (int) (512* ceil((double)size/512.0)) - size);
+      }
     }
-    if (xflag == 1) {
-      char* perm1 = buffer.mode+3;
-      int perm = atoi(perm1);
-      perm = convertOctalToDecimal(perm);
-
-
-      if (atoi(buffer.typeflag) == 5) {
-        struct utimbuf new_times;
-        timecrop=strdup(buffer.mtime);
-        new_times.modtime = convertOctalToDecimal(atol(timecrop));
-        utime(buffer.name, &new_times);
-
-
-      }
-      else if (atoi(buffer.typeflag) == 2) {
-
-        struct timeval timeval[2];
-        struct timeval const *t;
-        timecrop=strdup(buffer.mtime);
-        timeval[0].tv_sec = 0;
-        timeval[0].tv_usec = 0;
-        timeval[1].tv_sec = convertOctalToDecimal(atol(timecrop));
-        timeval[1].tv_usec = 0;
-        t = timeval;
-        lutimes (buffer.name, t);
-
-      }
-      else {
-        struct utimbuf new_times;
-        timecrop=strdup(buffer.mtime);
-        new_times.modtime = convertOctalToDecimal(atol(timecrop));
-        utime(buffer.name, &new_times);
-
-        chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
-      }
-
-      lseek(fd,(int) (512* ceil((double)size/512.0)) - size, SEEK_CUR);
-
-      //printf("Avancement de : %d\n", (int) (512* ceil((double)size/512.0)) - size);
-    }
-  }
-
+}
+  close(fd);
   return 0;
 }
