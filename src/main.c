@@ -138,9 +138,9 @@ if(nb_threads==0){}
       }
       else {
         //printf("%c\n", buffer.mode[3]);
-        if(atoi(buffer.typeflag)==5){
+        if(buffer.typeflag[0]=='5'){
           printf("d%s%s%s ",modeReading(buffer.mode+4),modeReading(buffer.mode+5), modeReading(buffer.mode+6));
-        }else if(atoi(buffer.typeflag)==2){
+        }else if(buffer.typeflag[0]=='2'){
           printf("l%s%s%s ",modeReading(buffer.mode+4),modeReading(buffer.mode+5), modeReading(buffer.mode+6));
         }else{
           printf("-%s%s%s ",modeReading(buffer.mode+4),modeReading(buffer.mode+5), modeReading(buffer.mode+6));
@@ -166,7 +166,7 @@ if(nb_threads==0){}
         printf("%s",buffer.name);
 
         //if(simlink) print('-> destination')
-        if(atoi(buffer.typeflag)==2){
+        if(buffer.typeflag[0]=='2'){
           printf(" -> %s\n",buffer.linkname);
         }else{
           printf("\n");
@@ -193,12 +193,12 @@ if(nb_threads==0){}
       perm = convertOctalToDecimal(perm);
 
 
-      if (atoi(buffer.typeflag) == 5) {
+      if (buffer.typeflag[0] == '5') {
         mkdir(buffer.name, perm);
 
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
       }
-      else if (atoi(buffer.typeflag) == 2 || atoi(buffer.typeflag) == 1) {
+      else if (buffer.typeflag[0] == '2') {
         symlink(buffer.linkname, buffer.name);
 
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
@@ -259,7 +259,7 @@ if(nb_threads==0){}
         perm = convertOctalToDecimal(perm);
 
 
-        if (atoi(buffer.typeflag) == 5) {
+        if (buffer.typeflag[0] == '5') {
           struct utimbuf new_times;
           timecrop=strdup(buffer.mtime);
           new_times.modtime = convertOctalToDecimal(atol(timecrop));
