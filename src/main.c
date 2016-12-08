@@ -269,12 +269,13 @@ if(nb_threads==0){}
 
         }
 
-        lseek(fd,(int) (512* ceil((double)size/512.0)), SEEK_CUR);
+        lseek(fd3,(int) (512* ceil((double)size/512.0)), SEEK_CUR);
 
         //printf("Avancement de : %d\n", (int) (512* ceil((double)size/512.0)) - size);
       }
     }
+    close(fd3);
 }
-  close(fd);
+
   return 0;
 }
