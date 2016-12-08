@@ -1,5 +1,8 @@
 #include "../headers/main.h"
 
+sem_t sema;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
 char* modeReading(char* perm) {
 
 char indice = perm[0];
@@ -60,9 +63,20 @@ int createFile(char* path, int size, int fd, int mode) {
 }
 
 void* createFileP(void* data) {
-  char name[100];
-  strcpy(name, data);
-  printf("Ecriture de %s\n", name);
+  sem_wait(&sema);
+
+  fileData newData;
+  memcpy(&newData, data, sizeof(fileData));
+
+
+  int sval;
+  //sleep(10);
+  sem_getvalue(&sema, &sval);
+  printf("Ecriture de %s\n Thread num: %p\n sema = %d\n", newData.path, (void *) pthread_self(),sval);
+  int fd2 = open(newData.path, O_CREAT | O_WRONLY, newData.mode);
+  write(fd2, newData.bufferData, newData.size);
+  close(fd2);
+  sem_post(&sema); /* epilogue */
   pthread_exit(NULL);
 }
 
@@ -131,7 +145,7 @@ if(nb_threads==0){}
   struct tm * timeinfo;
 
 
-
+  sem_init(&sema, 0, nb_threads);
   while(init) {
     read(fd, &buffer, 512); //Note: pour visualiser les bytes %02X
     strncpy(dest, buffer.size,11);
@@ -202,14 +216,14 @@ if(nb_threads==0){}
 
 
       if (buffer.typeflag[0] == '5') {
-        //mkdir(buffer.name, perm);
-        printf("Ecriture de : %s\n", buffer.name);
+        mkdir(buffer.name, perm);
+        printf("%s\n", buffer.name);
 
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
       }
       else if (buffer.typeflag[0] == '2') {
-        //symlink(buffer.linkname, buffer.name); TODO
-        printf("Ecriture de %s\n", buffer.name);
+        symlink(buffer.linkname, buffer.name);
+        printf("%s\n", buffer.name);
 
         chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
 
@@ -226,13 +240,20 @@ if(nb_threads==0){}
       else {
         if (pflag == 1) {
           char bufferFile[size-1];
+
           read(fd, &bufferFile, size);
-          char name[100];
-          strcpy(name, buffer.name);
-          pthread_create(&p_thread, NULL, createFileP, (void*)&name);
+          fileData data;
+          data.bufferData = strdup(bufferFile);
+          data.path = buffer.name;
+          data.size = size;
+          data.mode = perm;
+          memcpy(&data.bufferInfo, &buffer, sizeof(ustar));
+
+          pthread_create(&p_thread, NULL, createFileP, (void*)&data);
+
         }
         else {
-          //createFile(buffer.name, size, fd, perm);
+          createFile(buffer.name, size, fd, perm);
 
           chown(buffer.name, atoi(buffer.uid), atoi(buffer.gid));
 
@@ -259,7 +280,11 @@ if(nb_threads==0){}
     }
 
   }
+  pthread_join(p_thread, NULL);
+
+  sem_destroy(&sema);
   close(fd);
+
   if (xflag == 1) {
     init = 1;
     int fd3 = open(argv[argc-1], O_RDONLY, 0);

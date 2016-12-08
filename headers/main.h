@@ -40,14 +40,14 @@ struct header_posix_ustar {
 
 typedef struct
 {
-   sem_t* sema;
-   pthread_mutex_t mutex;
-   char* path;
-   int size;
-   int fd;
-   int mode;
+  ustar bufferInfo;
+  char* bufferData;
+  char* path;
+  int size;
+  int mode;
 }
-argument;
+fileData;
+
 
 char* modeReading(char* perm);
 
